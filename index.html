@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Scramble Game</title>
+    <style>
+         
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color:  #0245A4;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        
+        .container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color:rgba(247, 244, 244, 0.336); ;
+            border-radius: 8px;
+            height: 450px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: aqua;
+        }
+ 
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            color:  #FFC07C;
+        }
+
+       
+        .Score-Chance {
+            display: flex;
+            justify-content: space-between;
+            font-size: 24px;
+            color: black;
+            padding: 0 20px;
+            list-style: none;
+        }
+
+     
+        .guess {
+            font-size: 30px;
+            color: #FFC07C ;
+            margin: 20px 0;
+        }
+
+        
+        .input {
+            margin-bottom: 15px;
+        }
+
+        .input input {
+            width: 100%;
+            padding: 10px;
+            font-size: 25px;
+            border: 2px solid  #2094f3;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .input li {
+            font-size: 24px;
+            color: #FFC07C;
+            list-style: none;
+            margin-bottom: 10px;
+        }
+
+        
+        .button {
+            display: flex;
+            justify-content: space-around;
+            padding-top: 20px;
+        }
+
+        button {
+            font-size: 24px;
+            padding: 10px 20px;
+            border: 2px solid  ;
+            background-color: #2094f3;
+            color: #fff;
+            width: 120px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #17a2f2;
+            color: black;
+        }
+
+        
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .Score-Chance,
+            .input li {
+                font-size: 18px;
+            }
+
+            .guess {
+                font-size: 24px;
+            }
+
+            button {
+                font-size: 18px;
+                padding: 8px 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Container for the game -->
+    <div class="container">
+        <!-- Header Section -->
+        <header>
+            <h1>WORD SCRAMBLE GAME</h1>
+        </header>
+
+        <!-- Score and Chances Display -->
+        <div class="Score-Chance">
+            <li>Score:</li>
+            <li>Chance:</li>
+        </div>
+
+        <!-- Scrambled Word and User Input -->
+        <div class="guess" id="random-word">
+            <b>GUESS WORD:</b>
+        </div>
+
+        <div class="input">
+            <input type="text" id="input-box" placeholder="Answer">
+            <ul>
+                <li>Hint: </li>
+                <li>Answer: </li>
+            </ul>
+        </div>
+
+        <!-- Buttons Section -->
+        <div class="button">
+            <button type="button" id="hint">Hint</button>
+            <button type="button" id="next">Next</button>
+            <button type="button" id="answer">Answer</button>
+        </div>
+    </div>
+
+    <script>
+        const wordList = [
+    { word: "tree", hint: "A big plant with branches and leaves" },
+    { word: "star", hint: "A bright light in the sky at night" },
+    { word: "water", hint: "A liquid that we drink to stay alive" },
+    { word: "sun", hint: "The big yellow ball in the sky that gives us light" },
+    { word: "moon", hint: "The round object that glows at night" },
+    { word: "book", hint: "A collection of pages with stories or information" },
+    { word: "car", hint: "A vehicle with four wheels for transportation" },
+    { word: "river", hint: "A long stream of water that flows" },
+    { word: "house", hint: "A place where people live" },
+    { word: "bird", hint: "An animal that has feathers and can fly" },
+    { word: "gravity", hint: "Force that attracts objects towards each other" },
+    { word: "evolution", hint: "Process by which organisms change over time" },
+    { word: "photosynthesis", hint: "Process plants use to convert sunlight into energy" },
+    { word: "democracy", hint: "System of government where power rests with the people" },
+    { word: "algorithm", hint: "Step-by-step instructions for solving a problem" },
+    { word: "ecosystem", hint: "Community of organisms interacting with their environment" },
+    { word: "cryptocurrency", hint: "Digital currency secured by cryptography" },
+    { word: "astronomy", hint: "Study of celestial objects and the universe" },
+    { word: "quantum", hint: "Smallest discrete unit of energy" },
+    { word: "biodiversity", hint: "Variety of life forms in an ecosystem" },
+    
+];
+    let currentWord = '';
+    let scrambledWord = '';
+    let score = 0;
+    let chances = 3;
+    function getRandomWord() {
+        const randomIndex = Math.floor(Math.random() * wordList.length);
+        return wordList[randomIndex];
+    }
+
+    function scrambleWord(word) {
+        const wordArray = word.split('');
+        for (let i = wordArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [wordArray[i], wordArray[j]] = [wordArray[j], wordArray[i]];
+        }
+        return wordArray.join('');
+    }
+    function updateScoreChance() {
+        document.querySelector('.Score-Chance').innerHTML = `<li>Score: ${score}</li><li>Chance: ${chances}</li>`;
+    }
+    function generateNewWord() {
+        currentWord = getRandomWord();
+        scrambledWord = scrambleWord(currentWord.word);
+        document.getElementById('random-word').innerHTML = `<b>GUESS WORD: </b>${scrambledWord}`;
+        document.getElementById('input-box').value = '';
+        document.querySelector('.input li:nth-child(1)').innerHTML = 'Hint: '; // Clear the hint
+        document.querySelector('.input li:nth-child(2)').innerHTML = 'Answer: '; // Clear the answer
+    }
+    function handleNext() {
+        const userGuess = document.getElementById('input-box').value.trim().toLowerCase();
+        if (userGuess === currentWord.word) {
+            score += 10;
+            alert("Correct! Well done!");
+        } else {
+            chances -= 1;
+            if (chances <= 0) {
+                alert(`Game Over! You lost. Your final score is: ${score}`);
+                resetGame();
+                return; // Exit function to prevent generating a new word immediately
+            } else {
+                alert("Incorrect. Try again!");
+            }
+        }  updateScoreChance();
+        generateNewWord();
+    }
+
+    function handleHint() {
+        score -= 2; // Deduct 2 points for using the hint
+        document.querySelector('.input li:nth-child(1)').innerHTML = `Hint: ${currentWord.hint}`;
+        updateScoreChance(); // Update the score and chances display
+    }
+    // function handleAnswer() {
+    //     score -= 1; // Deduct 2 points for using the hint
+    //     chances -= 1;
+    //     document.querySelector('.input li:nth-child(2)').innerHTML = `Answer: ${currentWord.word}`;
+    //     updateScoreChance(); // Update the score and chances display
+    //     if (chances <= 0) {
+    //     alert(`Game Over! You lost. Your final score is: ${score}`);
+    //     resetGame(); // Reset the game if chances are over
+    // } else {
+    //     updateScoreChance(); // Update the score and chances display
+    // }
+    // }
+    function handleAnswer() {
+    if (chances === 1) { // Condition when only one chance is left
+        alert("You don't have sufficient chances to reveal the answer!");
+        return; // Exit the function without deducting points or revealing the answer
+    }
+
+    score -= 1; // Deduct 1 point for using the Answer button
+    chances -= 1; // Deduct 1 chance for revealing the answer
+    document.querySelector('.input li:nth-child(2)').innerHTML = `Answer: ${currentWord.word}`;
+    
+    if (chances <= 0) {
+        alert(`Game Over! You lost. Your final score is: ${score}`);
+        resetGame(); // Reset the game if chances are over
+    } else {
+        updateScoreChance(); // Update the score and chances display
+    }
+}
+
+
+    // function handleAnswer() {
+    //     document.querySelector('.input li:nth-child(2)').innerHTML = `Answer: ${currentWord.word}`;
+    //     resetGame();
+    // }
+    function resetGame() {
+        score = 0;
+        chances = 3;
+        updateScoreChance();
+        generateNewWord();
+    }  document.getElementById('next').addEventListener('click', handleNext);
+    document.getElementById('hint').addEventListener('click', handleHint);
+    document.getElementById('answer').addEventListener('click', handleAnswer);
+
+    document.getElementById('input-box').addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') {
+            handleNext();
+        }
+    });
+    generateNewWord();
+    updateScoreChance();
+    </script>
+</body>
+
+</html>
